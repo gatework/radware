@@ -40,6 +40,8 @@ jobs:
     needs: verify
     runs-on: ubuntu-latest
     environment: release
+    env:
+      GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
     permissions:
       contents: write
       id-token: write
@@ -56,10 +58,9 @@ jobs:
           path: pkg
       - name: Verify exact CI artifact
         run: ruby script/release.rb --check
-      - name: Configure RubyGems credentials
+      - name: Configure RubyGems Trusted Publishing
+        if: env.GEM_HOST_API_KEY == ''
         uses: rubygems/configure-rubygems-credentials@dc5a8d8553e6ee01fc26761a49e99e733d17954a # v2.1.0
-        with:
-          api-token: ${{ secrets.RUBYGEMS_API_KEY }}
       - name: Publish and verify RubyGems bytes
         run: ruby script/release.rb --push
       - name: Attach and verify GitHub Release assets
