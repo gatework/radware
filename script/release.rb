@@ -34,7 +34,7 @@ abort "Release tag differs from version" unless ENV["GITHUB_REF_TYPE"] == "tag" 
 def get(path)
   uri = URI("https://rubygems.org#{path}")
   # Avoid a cached pre-publication 404 when verifying a new version or retrying.
-  uri.query = URI.encode_www_form("release_check" => Time.now.to_i)
+  uri.query = URI.encode_www_form("release_check" => Time.now.to_i) if uri.path.start_with?("/api/")
   Net::HTTP.start(uri.host, uri.port, use_ssl: true, open_timeout: 15, read_timeout: 30) do |http|
     http.get(uri.request_uri)
   end
