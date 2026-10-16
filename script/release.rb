@@ -51,7 +51,7 @@ else
   abort "RubyGems preflight failed: HTTP #{response.code}"
 end
 
-24.times do |attempt|
+120.times do |attempt|
   response = get(metadata_path)
   if response.is_a?(Net::HTTPSuccess)
     metadata = JSON.parse(response.body)
@@ -66,6 +66,6 @@ end
   elsif !response.is_a?(Net::HTTPNotFound)
     abort "Read-back failed: HTTP #{response.code}"
   end
-  sleep 5 unless attempt == 23
+  sleep 5 unless attempt == 119
 end
 abort "RubyGems read-back timed out; rerun this workflow to verify the existing artifact"

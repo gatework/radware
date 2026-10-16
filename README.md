@@ -50,9 +50,11 @@ git push origin v0.1.1
 gh release create v0.1.1 --verify-tag --title v0.1.1 --notes-file CHANGELOG.md
 ```
 
-发布使用 GitHub `release` environment 的 `RUBYGEMS_API_KEY` secret。API key 需要 `push_rubygem` 权限，并允许非交互式发布；不要提交凭据。也可配置 [RubyGems Trusted Publishing](https://guides.rubygems.org/trusted-publishing/)（owner `gatework`、repository `radware`、workflow `release.yml`、environment `release`），随后删除该 secret，工作流将使用 OIDC。
+本仓库已配置 [RubyGems Trusted Publishing](https://guides.rubygems.org/trusted-publishing/)，通过 GitHub OIDC 获取短期发布凭据，无需长期 API key 或手动 OTP。RubyGems 上的 gem `radware` 信任 owner `gatework`、repository `radware`、workflow `release.yml`、environment `release`；发布环境仅允许 `v*` 标签。
 
-失败时优先重新运行失败的 job，以复用原 CI 产物。`workflow_dispatch` 仅接受版本标签，并要求 GitHub Release 已存在。已发布的相同版本只有校验和一致才可继续；不同内容必须提升版本号。
+只有主动切换为 API key 认证时，才需要设置 `release` environment 的 `RUBYGEMS_API_KEY` secret。
+
+发布后最多等待 10 分钟，核对 RubyGems 版本与下载字节。失败时优先重新运行失败的 job，以复用原 CI 产物。`workflow_dispatch` 仅接受版本标签，并要求 GitHub Release 已存在。已发布的相同版本只有校验和一致才可继续；不同内容必须提升版本号。
 
 ## 许可
 
